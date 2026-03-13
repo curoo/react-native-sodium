@@ -22,6 +22,14 @@ targetPlatforms="$@"
 [ "$targetPlatforms" ] || targetPlatforms="arm x86 ios"
 androidPageSizeLDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
 originalLDFLAGS="$LDFLAGS"
+buildIOS=0
+
+for targetPlatform in $targetPlatforms
+do
+  if [ "$targetPlatform" == "ios" ]; then
+    buildIOS=1
+  fi
+done
 
 for targetPlatform in $targetPlatforms
 do
@@ -56,11 +64,22 @@ cd ..
 # Move compiled libraries
 # --------------------------
 mkdir -p libsodium
-rm -Rf libsodium/*
+rm -Rf libsodium/libsodium-android-*
+rm -Rf libsodium/build/libsodium-android-*
+
+if [ "$buildIOS" == "1" ]; then
+  rm -Rf libsodium/libsodium-ios
+  rm -Rf libsodium/build/libsodium-apple
+fi
 
 [ -e $srcdir/libsodium-android-* ] && mv $srcdir/libsodium-android-* libsodium/
+[ -e $srcdir/build/libsodium-android-* ] && mkdir -p libsodium/build && mv $srcdir/build/libsodium-android-* libsodium/build/
 if [ "$platform" == 'Darwin' ] && [ -e $srcdir/libsodium-ios ]; then
   mv $srcdir/libsodium-ios libsodium/
+fi
+if [ "$platform" == 'Darwin' ] && [ -e $srcdir/build/libsodium-apple ]; then
+  mkdir -p libsodium/build
+  mv $srcdir/build/libsodium-apple libsodium/build/
 fi
 
 
