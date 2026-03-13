@@ -1,26 +1,27 @@
-# react-native-sodium
+# react-native-sodium (Expend maintenance fork)
 
-Sodium library is build from source (you should not trust a binary build when dealing  with cryptography)
-Source code is downloaded and verified before compilation
+This repo is a fork of a fork of a fork of a fork.
 
-General prerequisites
-gpg (macports, homebrew)
+- Upstream status: old and effectively unmaintained
+- This fork exists only to keep the Expend app working on modern React Native / Expo
 
-macOS compilation prerequisites
-XCode
-libtool (macports, homebrew)
-autoconf (macports, homebrew)
-automake (macports, homebrew)
+The upstream forks are outdated and no longer maintained.
 
+This fork is maintained by us as we require this library for our login flow for the Expend mobile app. We only touch it when necessary to fix compatibility issues as we update our app.
 
-Android prerequisites
-Android Studio
-SDK,
-NDK,
-CMake,
-LLDB
-Environment variables
+## Latest patch
 
-npm install react-native-sodium@https://github.com/lyubo/react-native-sodium.git
-cd ios && pod install
-react-native run-ios or react-native run-android
+Updates to satisfy Android's 16 KB page-size [requirements](https://developer.android.com/guide/practices/page-sizes).
+
+## Usage in the app
+
+```json
+"react-native-sodium": "https://github.com/curoo/react-native-sodium.git#head=fix/android-16kb-page-size"
+```
+
+## Rebuilding precompiled libs
+
+```bash
+npm run rebuild arm x86
+tar -czf precompiled.tgz libsodium
+```

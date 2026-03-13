@@ -20,6 +20,8 @@ cd $srcdir
 
 targetPlatforms="$@"
 [ "$targetPlatforms" ] || targetPlatforms="arm x86 ios"
+androidPageSizeLDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
+originalLDFLAGS="$LDFLAGS"
 
 for targetPlatform in $targetPlatforms
 do
@@ -36,13 +38,13 @@ do
   # --------------------------
   case $targetPlatform in
     "arm")
-      dist-build/android-arm.sh
-      dist-build/android-armv7-a.sh
-      dist-build/android-armv8-a.sh
+      LDFLAGS="$originalLDFLAGS $androidPageSizeLDFLAGS" dist-build/android-arm.sh
+      LDFLAGS="$originalLDFLAGS $androidPageSizeLDFLAGS" dist-build/android-armv7-a.sh
+      LDFLAGS="$originalLDFLAGS $androidPageSizeLDFLAGS" dist-build/android-armv8-a.sh
       ;;
     "x86")
-      dist-build/android-x86.sh
-      dist-build/android-x86_64.sh
+      LDFLAGS="$originalLDFLAGS $androidPageSizeLDFLAGS" dist-build/android-x86.sh
+      LDFLAGS="$originalLDFLAGS $androidPageSizeLDFLAGS" dist-build/android-x86_64.sh
     ;;
   esac
 
