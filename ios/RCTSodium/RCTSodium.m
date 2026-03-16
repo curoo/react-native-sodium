@@ -25,7 +25,7 @@ NSString * const ERR_BAD_SEED = @"BAD_SEED";
 NSString * const ERR_BAD_SIG = @"BAD_SIG";
 NSString * const ERR_FAILURE = @"FAILURE";
 
-RCT_EXPORT_MODULE();
+RCT_EXPORT_MODULE(Sodium);
 
 + (void) initialize
 {
