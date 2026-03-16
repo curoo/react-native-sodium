@@ -5,4 +5,4 @@
 
 import { NativeModules } from 'react-native'
 
-export default NativeModules.Sodium || NativeModules.RCTSodium;
+export default NativeModules.Sodium;

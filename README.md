@@ -16,12 +16,5 @@ Updates to satisfy Android's 16 KB page-size [requirements](https://developer.an
 ## Usage in the app
 
 ```json
-"react-native-sodium": "https://github.com/curoo/react-native-sodium.git#head=fix/android-16kb-page-size"
-```
-
-## Rebuilding precompiled libs
-
-```bash
-npm run rebuild arm x86
-tar -czf precompiled.tgz libsodium
+"react-native-sodium": "git+https://github.com/curoo/react-native-sodium.git#be9b011345bb656e8955ee49f36738be0222d957"
 ```
