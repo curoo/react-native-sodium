@@ -334,7 +334,7 @@ JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1pwhash_1scryptsa
   unsigned char *passwd = (unsigned char *) (*jenv)->GetByteArrayElements(jenv, j_passwd, 0);
   unsigned char *salt = (unsigned char *) (*jenv)->GetByteArrayElements(jenv, j_salt, 0);
 
-  int result = crypto_pwhash_scryptsalsa208sha256(out, (unsigned long long) j_outlen, passwd, (unsigned long long) j_passwdlen, salt, (unsigned long long) j_opslimit, (size_t) j_memlimit);
+  int result = crypto_pwhash_scryptsalsa208sha256(out, (unsigned long long) j_outlen, (const char *)passwd, (unsigned long long) j_passwdlen, salt, (unsigned long long) j_opslimit, (size_t) j_memlimit);
 
   (*jenv)->ReleaseByteArrayElements(jenv, j_out, (jbyte *) out, 0);
   (*jenv)->ReleaseByteArrayElements(jenv, j_passwd, (jbyte *) passwd, 0);

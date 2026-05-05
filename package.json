@@ -6,7 +6,9 @@
   },
   "scripts": {
     "postinstall": "tar -xzf precompiled.tgz",
-    "rebuild": "./build.sh"
+    "rebuild": "./build.sh",
+    "validate:android-page-size": "./scripts/validate-android-page-size.sh",
+    "pack:precompiled": "tar --exclude='.DS_Store' -czf precompiled.tgz libsodium"
   },
   "version": "0.3.0",
   "description": "The Sodium crypto library for React Native.",

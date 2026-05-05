@@ -13,7 +13,7 @@ elseif(ANDROID_ARCH STREQUAL "arm")
 elseif(ANDROID_ARCH STREQUAL "armeabi-v7a")
   set(ARCH_DIR "armv7-a")
 elseif(ANDROID_ARCH STREQUAL "arm64-v8a" OR ANDROID_ARCH STREQUAL "arm64")
-  set(ARCH_DIR "armv8-a")
+  set(ARCH_DIR "armv8-a+crypto")
 elseif(ANDROID_ARCH STREQUAL "x86")
   set(ARCH_DIR "i686")
 elseif(ANDROID_ARCH STREQUAL "x86_64")
@@ -38,12 +38,6 @@ endif()
 set(SODIUM_INCLUDE_DIR "${LIBSODIUM_ARCH_DIR}/include")
 set(SODIUM_STATIC_LIB "${LIBSODIUM_ARCH_DIR}/lib/libsodium.a")
 set(SODIUM_SHARED_LIB "${LIBSODIUM_ARCH_DIR}/lib/libsodium.so")
-set(FORCE_SHARED_SODIUM OFF)
-
-# Some precompiled x86 static archives are not PIC and fail when linked into sodium-jni.so.
-if((ANDROID_ARCH STREQUAL "x86" OR ANDROID_ARCH STREQUAL "x86_64" OR ARCH_DIR STREQUAL "i686" OR ARCH_DIR STREQUAL "westmere") AND EXISTS "${SODIUM_SHARED_LIB}")
-  set(FORCE_SHARED_SODIUM ON)
-endif()
 
 include_directories(${SODIUM_INCLUDE_DIR})
 set(ABI_DIR "${ANDROID_ABI}")
@@ -51,11 +45,12 @@ if("${ABI_DIR}" STREQUAL "")
   set(ABI_DIR "${ANDROID_ARCH}")
 endif()
 
-if(EXISTS "${SODIUM_STATIC_LIB}" AND NOT FORCE_SHARED_SODIUM)
+if(EXISTS "${SODIUM_STATIC_LIB}")
   add_library(sodium STATIC IMPORTED)
   set_target_properties(sodium PROPERTIES IMPORTED_LOCATION "${SODIUM_STATIC_LIB}")
 
-  # Avoid shipping stale copies of libsodium.so from previous shared-link builds.
+  # Keep the APK/AAB surface small: sodium-jni.so contains libsodium, so do not
+  # package a second libsodium.so when a usable static archive is available.
   file(REMOVE "${PROJECT_SOURCE_DIR}/lib/${ABI_DIR}/libsodium.so")
 elseif(EXISTS "${SODIUM_SHARED_LIB}")
   add_library(sodium SHARED IMPORTED)
@@ -71,12 +66,12 @@ endif()
 add_library(sodium-jni SHARED src/main/cpp/sodium-jni.c)
 target_link_libraries(sodium-jni sodium)
 
-if(ANDROID_ARCH STREQUAL "arm64-v8a" OR ANDROID_ARCH STREQUAL "arm64")
-  # Force 16 KB-compatible segment alignment for Android arm64.
-  set_property(
-    TARGET sodium-jni
-    APPEND_STRING
-    PROPERTY LINK_FLAGS
-    " -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
-  )
-endif()
+# Force 16 KB-compatible segment alignment for every Android ABI we ship.
+# Google Play validates all native libraries in the AAB, including emulator ABIs
+# such as x86_64 if they are present.
+set_property(
+  TARGET sodium-jni
+  APPEND_STRING
+  PROPERTY LINK_FLAGS
+  " -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384"
+)
