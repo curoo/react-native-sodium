@@ -1,16 +1,7 @@
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
-    }
-}
-
 apply plugin: 'com.android.library'
 
 android {
+    namespace "org.libsodium.rn"
     compileSdkVersion 35
     buildToolsVersion "35.0.0"
     defaultConfig {
